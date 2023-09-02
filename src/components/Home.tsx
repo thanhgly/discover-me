@@ -7,21 +7,23 @@ import { RxDividerVertical } from "react-icons/rx";
 const Home = () => {
   const [showChat, setShowChat] = useState(false);
 
-  const { firstName, lastName, title, bio, githubLink, linkedinLink } =
+  const { firstName, lastName, title, bio, githubLink, linkedinLink, cvLink } =
     personalInfo;
 
   return (
     <>
-      <div className="m-[10%] flex flex-row p-10 text-left text-white">
-        <div className="flex w-6/12 flex-col items-start">
-          <div className="text-xl">Hello, my name is </div>
+      <div className="m-[10%] flex flex-row place-content-center p-10 text-left text-white">
+        <div className="flex w-6/12 flex-col">
+          <div className="text-3xl">Hello, my name is </div>
           <div className="text-9xl font-bold">
             {firstName} {lastName}
           </div>
-          <div className="text-4xl font-bold text-lime-400"> {title} </div>
-          <div className="w-auto p-3 text-xl">{bio}</div>
+          <div className="py-5 text-4xl font-bold text-lime-400"> {title} </div>
+          <div className="w-full max-w-2xl py-5 text-3xl">{bio}</div>
           <div className="w-8/12 text-center">
-            <button>Download CV</button>
+            <a className="btn" href={cvLink} target="_blank">
+              Download CV
+            </a>
           </div>
         </div>
         <div className=" w-6/12 self-center text-center">
@@ -34,13 +36,13 @@ const Home = () => {
       </div>
       <footer>
         <a href={linkedinLink} target="_blank">
-          <FiLinkedin size={30} />
+          <FiLinkedin size={40} />
         </a>
         <a className="text-lime-400">
-          <RxDividerVertical size={30} />
+          <RxDividerVertical size={40} />
         </a>
         <a href={githubLink} target="_blank">
-          <FiGithub size={30} />
+          <FiGithub size={40} />
         </a>
       </footer>
     </>

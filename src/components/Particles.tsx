@@ -41,7 +41,7 @@ const Particle = () => {
             },
             onHover: {
               enable: true,
-              mode: "bubble",
+              mode: "grab",
             },
             resize: true,
           },
@@ -59,6 +59,9 @@ const Particle = () => {
               opacity: 1,
               duration: 2,
             },
+            grab: {
+              distance: 200,
+            },
           },
         },
         particles: {
@@ -70,7 +73,7 @@ const Particle = () => {
             distance: 100,
             enable: true,
             opacity: 0.5,
-            width: 1,
+            width: 3,
           },
           move: {
             direction: "bottom-right",
@@ -85,9 +88,9 @@ const Particle = () => {
           number: {
             density: {
               enable: true,
-              area: 700,
+              area: 1000,
             },
-            value: 300,
+            value: 100,
           },
           opacity: {
             value: 0.5,
