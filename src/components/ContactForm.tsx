@@ -1,6 +1,6 @@
 const ContactForm = () => {
   return (
-    <form className="w-6/12">
+    <form className="w-6/12" onSubmit={(e) => e.preventDefault()}>
       <h2>Contact me</h2>
       <div className="-mx-3 mb-6 flex flex-wrap">
         <div className="group w-full px-3">
