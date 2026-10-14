@@ -1,38 +1,23 @@
 import path from "node:path";
-import { defineConfig, defaultExclude } from "vitest/config";
-import configuration from "./vite.config";
+import { defineConfig } from "vitest/config";
+import configuration from "./vite.config.ts";
 
 export default defineConfig({
   ...configuration,
   resolve: {
     alias: {
-      ...configuration?.resolve?.alias,
-      test: path.resolve(__dirname, "./test"),
+      ...configuration.resolve?.alias,
+      test: path.resolve(import.meta.dirname, "./test"),
     },
   },
   test: {
+    dir: import.meta.dirname,
     globals: true,
-    setupFiles: path.resolve(__dirname, "test/setup.ts"),
-    exclude: [...defaultExclude],
-    environmentMatchGlobs: [
-      ["**/*.test.tsx", "jsdom"],
-      ["**/*.component.test.ts", "jsdom"],
-    ],
+    environment: "jsdom",
+    setupFiles: path.resolve(import.meta.dirname, "test/setup.ts"),
     coverage: {
-      statements: 60.39,
-      thresholdAutoUpdate: true,
-      include: ["src/**/*"],
-      exclude: [
-        "test/**",
-        "vite.*.ts",
-        "**/*.d.ts",
-        "**/*.test.*",
-        "**/*.config.*",
-        "**/snapshot-tests/**",
-        "**/*.solution.tsx",
-        "**/coverage/**",
-      ],
-      all: true,
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["**/*.d.ts", "**/*.test.*"],
     },
   },
 });

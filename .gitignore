@@ -23,6 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
-.DS_Store
 plans/
-data/info.ts
+.env
+.env.*
+!.env.example
+coverage
+
+# Local Netlify folder
+.netlify
+
+# Your real profile (keeps personal data out of git)
+profile.local/

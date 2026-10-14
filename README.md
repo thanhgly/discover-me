@@ -1,2 +1,65 @@
-# discover-me
-This repository houses the code for "Discover Me," an AI-powered chatbox portfolio. It allows visitors to engage in a natural conversation and explore the work experience, skills, and projects of a software engineer. Connect with the virtual assistant and uncover the world of coding and tech accomplishments. Let's chat and discover together! 💻🤖
+# Discover Me
+
+An AI-powered portfolio: visitors chat with an assistant that answers questions about your experience, skills, and projects. Fork it, drop in your own profile and Claude API key, and deploy your own copy.
+
+**Architecture:** a serverless (Jamstack) app. A static React + TypeScript + Tailwind site is served from Netlify's CDN, and one Netlify Function streams answers from Claude. There's no always-on server or database, so it costs nothing when nobody's chatting.
+
+## Make it yours
+
+1. **Copy the repo.** Click **Use this template** (or fork) on GitHub, then clone your copy.
+2. **Add your details.** `profile/` holds a sample profile. Pick one:
+   - **Keep your data out of git (recommended for public repos):** copy `profile/` to `profile.local/` and edit the copy. `profile.local/` is git-ignored, and the site and assistant use it automatically when it exists.
+   - **Commit your data:** edit `profile/` directly.
+
+   Each folder has two files:
+   - `profile.json`: name, pronoun, title, bio, links, contact info, CV link. These appear on the site.
+   - `about-me.md`: the assistant's knowledge base. Write in the third person; the assistant answers only from this file. A `## TODO` section is never sent to the model.
+
+3. **Get a Claude API key** at [console.anthropic.com](https://console.anthropic.com): add credits, set a monthly spending limit, and create a key.
+4. **Deploy on Netlify.** Create a site at [app.netlify.com](https://app.netlify.com) (build settings come from `netlify.toml`) and add `ANTHROPIC_API_KEY` under Site configuration → Environment variables. Then:
+   - If your data is in `profile.local/`, deploy from your machine so it's included: `npx netlify-cli deploy --build --prod`. (Builds triggered from GitHub won't have it and would show the sample.)
+   - If you committed `profile/`, just connect the repo and Netlify deploys on every push.
+
+Optional: set `CLAUDE_MODEL` (for example `claude-sonnet-5-5`) to use a different Claude model. The default is `claude-haiku-5-5`, which costs well under a cent per message.
+
+Your API key stays in your own Netlify settings and is only used server-side; it never reaches the browser.
+
+## Contact form
+
+The contact page uses [Netlify Forms](https://docs.netlify.com/forms/setup/), so it only sends on a deployed site, not under `npm start`. After the first deploy, open the site in Netlify, go to **Forms**, and enable form detection if asked; then redeploy so Netlify picks up the form. To get submissions by email, go to **Site configuration → Notifications → Emails and webhooks → Form submission notifications → Add notification → Email notification** (event: _New form submission_, form: `contact`).
+
+## Local development
+
+Requires Node 20.19+ (22 recommended, see `.nvmrc`).
+
+```sh
+npm install
+cp .env.example .env      # add your ANTHROPIC_API_KEY
+npm run dev:netlify       # site + chat function at http://localhost:8888
+```
+
+`npm run dev` serves the site without the chat backend. `dev:netlify` uses the [Netlify CLI](https://docs.netlify.com/cli/get-started/) (`npm i -g netlify-cli`, or run `npx netlify-cli dev`).
+
+## How the chat works
+
+`src/components/ChatBox.tsx` posts the conversation to `/api/chat`. `netlify/functions/chat.ts` validates it, builds a system prompt from the profile (`profile.local/` if present, else `profile/`) (`netlify/lib/chat.ts`), calls Claude through `@anthropic-ai/sdk`, and streams the reply back as plain text. Conversations are capped at 20 messages of 1,000 characters each, and Netlify rate-limits each visitor to 10 requests a minute.
+
+## Scripts
+
+| Script                  | Purpose                           |
+| ----------------------- | --------------------------------- |
+| `npm run dev`           | Start the Vite dev server         |
+| `npm run dev:netlify`   | Dev server plus the chat function |
+| `npm run build`         | Type-check and build to `dist/`   |
+| `npm run lint`          | ESLint (fails on warnings)        |
+| `npm run typecheck`     | Type-check app, configs, function |
+| `npm run format`        | Format with Prettier              |
+| `npm test`              | Vitest in watch mode              |
+| `npm run test:ci`       | Single Vitest run                 |
+| `npm run test:coverage` | Single run with coverage          |
+
+CI (`.gitlab-ci.yml` on GitLab, `.github/workflows/ci.yml` on GitHub) runs format check, lint, build and tests. A husky pre-commit hook runs lint-staged.
+
+## Stack
+
+React 19, TypeScript, Vite 8, Tailwind CSS 4, react-router-dom 7, Netlify Functions, Claude via `@anthropic-ai/sdk`, Vitest.

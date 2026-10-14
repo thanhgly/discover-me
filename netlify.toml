@@ -1,0 +1,18 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  # The chat function reads the profile at runtime (profile.local/ wins when present)
+  included_files = ["profile/**", "profile.local/**"]
+
+[dev]
+  command = "npm run dev"
+  targetPort = 5173
+  framework = "#custom"
+
+# SPA fallback so client-side routes like /contact work on refresh
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
