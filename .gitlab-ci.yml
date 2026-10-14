@@ -1,17 +1,56 @@
+# Mirrors .github/workflows/ci.yml: runs on merge requests and on pushes to main.
 workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-check:
+stages:
+  - check
+  - deploy
+
+default:
   image: node:22
   cache:
     key:
-      files: [package-lock.json]
-    paths: [.npm/]
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+
+variables:
+  HUSKY: "0"
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+check:
+  stage: check
   script:
-    - npm ci --cache .npm --prefer-offline
+    - npm ci
     - npm run format:check
     - npm run lint
     - npm run build
     - npm run test:ci
+
+# Deploys main to Netlify. Your real profile comes from two File-type CI/CD variables,
+# PROFILE_JSON and ABOUT_ME_MD, so it never lives in git. Skipped until
+# NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID are set. See "Auto-deploy" in the README.
+deploy:
+  stage: deploy
+  needs: [check]
+  resource_group: production
+  environment:
+    name: production
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $NETLIFY_AUTH_TOKEN && $NETLIFY_SITE_ID
+  script:
+    - npm ci
+    - |
+      if [ -n "$PROFILE_JSON" ] && [ -n "$ABOUT_ME_MD" ]; then
+        mkdir -p profile.local
+        cp "$PROFILE_JSON" profile.local/profile.json
+        cp "$ABOUT_ME_MD" profile.local/about-me.md
+      elif [ "$DEPLOY_SAMPLE_PROFILE" != "true" ]; then
+        echo "PROFILE_JSON and ABOUT_ME_MD are not set; refusing to deploy the sample profile."
+        echo "Set them, or set DEPLOY_SAMPLE_PROFILE=true to deploy the sample on purpose."
+        exit 1
+      fi
+    - npx --yes netlify-cli@27.12.1 deploy --build --prod --site "$NETLIFY_SITE_ID"
