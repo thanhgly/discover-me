@@ -58,7 +58,7 @@ npm run dev:netlify       # site + chat function at http://localhost:8888
 | `npm run test:ci`       | Single Vitest run                 |
 | `npm run test:coverage` | Single run with coverage          |
 
-CI (`.github/workflows/ci.yml`) runs format check, lint, build and tests. A husky pre-commit hook runs lint-staged.
+CI (`.gitlab-ci.yml` on GitLab, `.github/workflows/ci.yml` on GitHub) runs format check, lint, build and tests. A husky pre-commit hook runs lint-staged.
 
 ## Stack
 
