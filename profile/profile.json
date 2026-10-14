@@ -1,0 +1,13 @@
+{
+  "firstName": "Alex",
+  "lastName": "Rivera",
+  "pronoun": "she",
+  "title": "Frontend Engineer",
+  "bio": "I design and build fast, accessible web apps. Currently focused on React, design systems, and developer tooling.",
+  "location": "Austin, Texas",
+  "githubLink": "https://github.com/your-username",
+  "linkedinLink": "https://www.linkedin.com/in/your-profile/",
+  "emails": ["you@example.com"],
+  "phone": [],
+  "cvLink": ""
+}

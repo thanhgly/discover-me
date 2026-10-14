@@ -1,51 +1,47 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { FiArrowRight, FiDownload, FiMapPin } from "react-icons/fi";
 import ChatBox from "./ChatBox";
-import personalInfo from "../../data/info";
-import { FiLinkedin, FiGithub } from "react-icons/fi";
-import { RxDividerVertical } from "react-icons/rx";
+import { profile as personalInfo } from "../lib/profile";
 
 const Home = () => {
-  const [showChat, setShowChat] = useState(false);
-
-  const { firstName, lastName, title, bio, githubLink, linkedinLink, cvLink } =
-    personalInfo;
+  const { firstName, lastName, title, bio, location, cvLink } = personalInfo;
 
   return (
-    <>
-      <div className="m-[10%] flex flex-row place-content-center p-10 text-left text-white">
-        <div className="flex w-6/12 flex-col">
-          <div className="text-3xl">Hello, my name is </div>
-          <div className="text-9xl font-bold">
-            {firstName} {lastName}
-          </div>
-          <div className="py-5 text-4xl font-bold text-lime-400"> {title} </div>
-          <div className="w-full max-w-2xl py-5 text-3xl">{bio}</div>
-          <div className="w-8/12 text-center">
-            <a className="btn" href={cvLink} target="_blank">
-              Download CV
+    <section className="grid items-center gap-10 py-10 lg:grid-cols-[1fr_minmax(0,28rem)] lg:gap-16 lg:py-20">
+      <div>
+        {location && (
+          <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-zinc-300">
+            <FiMapPin className="text-accent" /> {location}
+          </p>
+        )}
+        <p className="text-lg text-zinc-400">Hi, I'm</p>
+        <h1 className="mt-1 text-5xl font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl">
+          {firstName} {lastName}
+        </h1>
+        <p className="mt-4 text-xl font-semibold text-accent sm:text-2xl">
+          {title}
+        </p>
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-pretty text-zinc-300">
+          {bio}
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link to="/contact" className="btn btn-primary">
+            Get in touch <FiArrowRight />
+          </Link>
+          {cvLink && (
+            <a
+              className="btn btn-ghost"
+              href={cvLink}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FiDownload /> Download CV
             </a>
-          </div>
-        </div>
-        <div className=" w-6/12 self-center text-center">
-          {showChat ? (
-            <ChatBox />
-          ) : (
-            <button onClick={() => setShowChat(true)}>Let's chat</button>
           )}
         </div>
       </div>
-      <footer>
-        <a href={linkedinLink} target="_blank">
-          <FiLinkedin size={40} />
-        </a>
-        <a className="text-lime-400">
-          <RxDividerVertical size={40} />
-        </a>
-        <a href={githubLink} target="_blank">
-          <FiGithub size={40} />
-        </a>
-      </footer>
-    </>
+      <ChatBox />
+    </section>
   );
 };
 

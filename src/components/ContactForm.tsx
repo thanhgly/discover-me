@@ -1,41 +1,74 @@
+const Field = ({
+  id,
+  label,
+  children,
+}: {
+  id: string;
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <div>
+    <label
+      htmlFor={id}
+      className="mb-1.5 block text-sm font-medium text-zinc-300"
+    >
+      {label}
+    </label>
+    {children}
+  </div>
+);
+
 const ContactForm = () => {
   return (
-    <form className="w-6/12" onSubmit={(e) => e.preventDefault()}>
-      <h2>Contact me</h2>
-      <div className="-mx-3 mb-6 flex flex-wrap">
-        <div className="group w-full px-3">
-          <label htmlFor="full-name">Full name</label>
-          <input type="text" id="full-name" placeholder="John/Jane Doe" />
-        </div>
-      </div>
-      <div className="-mx-3 mb-6 flex flex-wrap">
-        <div className="group w-full px-3">
-          <label htmlFor="email">Email</label>
-          <input type="text" id="email" placeholder="name@domain.com" />
-        </div>
-      </div>
-      <div className="-mx-3 mb-6 flex flex-wrap">
-        <div className="group w-full px-3">
-          <label htmlFor="subject">Subject</label>
+    <form
+      className="card mt-8 grid gap-5 p-6 sm:grid-cols-2 sm:p-8"
+      onSubmit={(e) => e.preventDefault()}
+    >
+      <Field id="full-name" label="Name">
+        <input
+          className="field"
+          id="full-name"
+          name="name"
+          placeholder="Jane Doe"
+          required
+        />
+      </Field>
+      <Field id="email" label="Email">
+        <input
+          className="field"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="name@domain.com"
+          required
+        />
+      </Field>
+      <div className="sm:col-span-2">
+        <Field id="subject" label="Subject">
           <input
-            type="text"
+            className="field"
             id="subject"
-            placeholder="Your Exciting Announcement"
+            name="subject"
+            placeholder="What's this about?"
           />
-        </div>
+        </Field>
       </div>
-
-      <div className="group">
-        <label htmlFor="message">Message</label>
-        <textarea
-          id="message"
-          rows={4}
-          className="block w-full max-w-2xl rounded-lg border border-gray-200 bg-gray-200 p-3 text-sm text-gray-700 focus:border-2 focus:border-lime-500 focus:outline-none"
-          placeholder="Write your thoughts here..."
-        ></textarea>
+      <div className="sm:col-span-2">
+        <Field id="message" label="Message">
+          <textarea
+            className="field min-h-36 resize-y"
+            id="message"
+            name="message"
+            placeholder="Write your message..."
+            required
+          />
+        </Field>
       </div>
-
-      <button className=" w-1/3">Send</button>
+      <div className="sm:col-span-2">
+        <button type="submit" className="btn btn-primary w-full sm:w-auto">
+          Send message
+        </button>
+      </div>
     </form>
   );
 };

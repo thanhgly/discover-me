@@ -15,8 +15,6 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      # data/info.ts is gitignored; use the example for CI
-      - run: cp data/info.example.ts data/info.ts
       - run: npm run format:check
       - run: npm run lint
       - run: npm run build
