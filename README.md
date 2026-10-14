@@ -24,6 +24,17 @@ Optional: set `CLAUDE_MODEL` (for example `claude-sonnet-5-5`) to use a differen
 
 Your API key stays in your own Netlify settings and is only used server-side; it never reaches the browser.
 
+### Auto-deploy from GitLab
+
+Pushes to `main` deploy to Netlify after the checks pass (`.gitlab-ci.yml`). In the GitLab project, go to **Settings → CI/CD → Variables** and add these, all **Protected** (`main` is protected):
+
+- `NETLIFY_AUTH_TOKEN`: a Netlify personal access token (**User settings → Applications**). Also mark it **Masked**.
+- `NETLIFY_SITE_ID`: from Netlify **Site configuration → Site details**.
+- `PROFILE_JSON` (type **File**): the contents of `profile.local/profile.json`.
+- `ABOUT_ME_MD` (type **File**): the contents of `profile.local/about-me.md`.
+
+File variables can't be masked. Set `ANTHROPIC_API_KEY` in Netlify, not GitLab. Without the profile variables the deploy job refuses to publish the sample profile unless `DEPLOY_SAMPLE_PROFILE=true`.
+
 ## Contact form
 
 The contact page uses [Netlify Forms](https://docs.netlify.com/forms/setup/), so it only sends on a deployed site, not under `npm start`. After the first deploy, open the site in Netlify, go to **Forms**, and enable form detection if asked; then redeploy so Netlify picks up the form. To get submissions by email, go to **Site configuration → Notifications → Emails and webhooks → Form submission notifications → Add notification → Email notification** (event: _New form submission_, form: `contact`).
