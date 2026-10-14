@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ChatBox from "./ChatBox";
-import personalInfo from "../../data/info.js";
+import personalInfo from "../../data/info";
 import { FiLinkedin, FiGithub } from "react-icons/fi";
 import { RxDividerVertical } from "react-icons/rx";
 

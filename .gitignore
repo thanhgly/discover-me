@@ -26,3 +26,7 @@ dist-ssr
 .DS_Store
 plans/
 data/info.ts
+.env
+.env.*
+!.env.example
+coverage
