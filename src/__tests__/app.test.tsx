@@ -69,3 +69,38 @@ it("navigates to the contact page", async () => {
     screen.getByRole("heading", { name: "Get in touch" }),
   ).toBeInTheDocument();
 });
+
+it("submits the contact form to Netlify Forms", async () => {
+  const fetchMock = vi.fn().mockResolvedValue(new Response(null));
+  vi.stubGlobal("fetch", fetchMock);
+  const { user } = render(<App />);
+  await user.click(screen.getByRole("link", { name: "Contact" }));
+  await user.type(screen.getByLabelText("Name"), "Jane");
+  await user.type(screen.getByLabelText("Email"), "jane@example.com");
+  await user.type(screen.getByLabelText("Message"), "Hello!");
+  await user.click(screen.getByRole("button", { name: "Send message" }));
+
+  expect(await screen.findByText(/your message was sent/)).toBeInTheDocument();
+  const [url, init] = fetchMock.mock.calls[0];
+  expect(url).toBe("/");
+  const sent = new URLSearchParams(init.body);
+  expect(sent.get("form-name")).toBe("contact");
+  expect(sent.get("email")).toBe("jane@example.com");
+  expect(sent.get("message")).toBe("Hello!");
+});
+
+it("keeps the contact form filled in when sending fails", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn().mockResolvedValue(new Response(null, { status: 500 })),
+  );
+  const { user } = render(<App />);
+  await user.click(screen.getByRole("link", { name: "Contact" }));
+  await user.type(screen.getByLabelText("Name"), "Jane");
+  await user.type(screen.getByLabelText("Email"), "jane@example.com");
+  await user.type(screen.getByLabelText("Message"), "Hello!");
+  await user.click(screen.getByRole("button", { name: "Send message" }));
+
+  expect(await screen.findByRole("alert")).toHaveTextContent(/didn't send/);
+  expect(screen.getByLabelText("Message")).toHaveValue("Hello!");
+});

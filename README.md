@@ -24,6 +24,10 @@ Optional: set `CLAUDE_MODEL` (for example `claude-sonnet-5-5`) to use a differen
 
 Your API key stays in your own Netlify settings and is only used server-side; it never reaches the browser.
 
+## Contact form
+
+The contact page uses [Netlify Forms](https://docs.netlify.com/forms/setup/), so it only sends on a deployed site, not under `npm start`. After the first deploy, open the site in Netlify, go to **Forms**, and enable form detection if asked; then redeploy so Netlify picks up the form. To get submissions by email, go to **Site configuration → Notifications → Emails and webhooks → Form submission notifications → Add notification → Email notification** (event: _New form submission_, form: `contact`).
+
 ## Local development
 
 Requires Node 20.19+ (22 recommended, see `.nvmrc`).
