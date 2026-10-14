@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "dev:netlify": "netlify dev"
+    "dev:netlify": "netlify dev",
+    "start": "netlify dev --offline --target-port 5180 --command \"vite --port 5180 --strictPort\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",
