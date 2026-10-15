@@ -12,7 +12,7 @@ An AI-powered portfolio: visitors chat with an assistant that answers questions 
    - **Commit your data:** edit `profile/` directly.
 
    Each folder has two files:
-   - `profile.json`: name, pronoun, title, bio, links, contact info, CV link. These appear on the site.
+   - `profile.json`: name, pronoun, title, bio, links, contact email, CV link, plus optional `experience`, `projects` and `skills` (home page sections that hide when empty), `openToRoles` (what you're looking for; also enables the "open to new roles?" chat starter) and `siteUrl` (used for link previews when Netlify's `URL` isn't set). These appear on the site.
    - `about-me.md`: the assistant's knowledge base. Write in the third person; the assistant answers only from this file. A `## TODO` section is never sent to the model.
 
 3. **Get a Claude API key** at [console.anthropic.com](https://console.anthropic.com): add credits, set a monthly spending limit, and create a key.
@@ -39,6 +39,26 @@ File variables can't be masked. Set `ANTHROPIC_API_KEY` in Netlify, not GitLab. 
 
 The contact page uses [Netlify Forms](https://docs.netlify.com/forms/setup/), so it only sends on a deployed site, not under `npm start`. After the first deploy, open the site in Netlify, go to **Forms**, and enable form detection if asked; then redeploy so Netlify picks up the form. To get submissions by email, go to **Site configuration → Notifications → Emails and webhooks → Form submission notifications → Add notification → Email notification** (event: _New form submission_, form: `contact`).
 
+## Link previews and SEO
+
+`seo/plugin.ts` (a small Vite plugin) builds the page title, description, canonical URL, Open Graph and Twitter card tags, and JSON-LD from `profile.json`, and emits `favicon.svg`, a 1200×630 `og-image.png`, `robots.txt` and `sitemap.xml`. The preview image is rendered with [`@resvg/resvg-js`](https://github.com/yisibl/resvg-js) (a prebuilt native SVG renderer, no browser needed) using the bundled Inter font in `seo/fonts/` (SIL Open Font License).
+
+## Visitor questions
+
+After each reply, the chat function saves the question, the reply and a timestamp to a [Netlify Blobs](https://docs.netlify.com/blobs/overview/) store named `chat-log`. Nothing that identifies the visitor (IP, user agent, conversation history) is stored. Entries where the assistant said it didn't know have `"unanswered": true`: those are gaps to fill in `about-me.md`. Saving failures are logged and never affect the chat.
+
+To read them, link your checkout to the site once (`netlify link`), then:
+
+```sh
+netlify blobs:list chat-log                       # keys are timestamps, oldest first
+netlify blobs:list chat-log --prefix 2026-10      # one month
+netlify blobs:get chat-log <key>                  # one entry as JSON
+netlify blobs:list chat-log --json | jq -r '.blobs[].key' \
+  | while read -r k; do netlify blobs:get chat-log "$k"; echo; done | jq -s 'map(select(.unanswered))'
+```
+
+Delete an entry with `netlify blobs:delete chat-log <key>`. You can also browse the store in the Netlify UI under **Blobs**.
+
 ## Local development
 
 Requires Node 20.19+ (22 recommended, see `.nvmrc`).
@@ -53,7 +73,7 @@ npm run dev:netlify       # site + chat function at http://localhost:8888
 
 ## How the chat works
 
-`src/components/ChatBox.tsx` posts the conversation to `/api/chat`. `netlify/functions/chat.ts` validates it, builds a system prompt from the profile (`profile.local/` if present, else `profile/`) (`netlify/lib/chat.ts`), calls Claude through `@anthropic-ai/sdk`, and streams the reply back as plain text. Conversations are capped at 20 messages of 1,000 characters each, and Netlify rate-limits each visitor to 10 requests a minute.
+`src/components/ChatBox.tsx` posts the conversation to `/api/chat`. `netlify/functions/chat.ts` validates it, builds a system prompt from the profile (`profile.local/` if present, else `profile/`) (`netlify/lib/chat.ts`), calls Claude through `@anthropic-ai/sdk`, and streams the reply back as plain text. Conversations are capped at 20 messages of 1,000 characters each, and Netlify rate-limits each visitor to 10 requests a minute. The conversation lives in `ChatProvider` above the routes (and in `sessionStorage`), so it survives visiting the contact page or reloading the tab.
 
 ## Scripts
 

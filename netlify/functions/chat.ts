@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Config } from "@netlify/functions";
+import type { Config, Context } from "@netlify/functions";
 import {
   MODEL,
   ownerFirstName,
@@ -7,13 +7,14 @@ import {
   parseMessages,
   systemPrompt,
 } from "../lib/chat";
+import { saveExchange } from "../lib/chatLog";
 
 const client = new Anthropic();
 
 const fallback = () =>
   `Sorry, I can't help with that one. Feel free to reach out to ${ownerFirstName()} directly through the contact page.`;
 
-export default async (req: Request): Promise<Response> => {
+export default async (req: Request, context: Context): Promise<Response> => {
   let messages: Anthropic.MessageParam[];
   try {
     messages = parseMessages(await req.json());
@@ -38,7 +39,9 @@ export default async (req: Request): Promise<Response> => {
   );
   const body = new ReadableStream<Uint8Array>({
     async start(controller) {
+      let reply = "";
       const send = (text: string) => {
+        reply += text;
         try {
           controller.enqueue(encoder.encode(text));
         } catch {
@@ -62,6 +65,13 @@ export default async (req: Request): Promise<Response> => {
         } catch {
           // already closed by a cancelled client
         }
+      }
+      // Log what visitors ask (no IP or other identifying data) to improve
+      // about-me.md. Runs after the reply is sent and never throws.
+      const question = messages[messages.length - 1].content;
+      if (reply && !stream.aborted && typeof question === "string") {
+        const saving = saveExchange(question, reply);
+        context?.waitUntil?.(saving);
       }
     },
     cancel() {

@@ -9,5 +9,38 @@
   "linkedinLink": "https://www.linkedin.com/in/your-profile/",
   "emails": ["you@example.com"],
   "phone": [],
-  "cvLink": ""
+  "cvLink": "",
+  "openToRoles": "Senior frontend or design-systems roles, remote or hybrid",
+  "skills": [
+    {
+      "group": "Frontend",
+      "items": ["React", "TypeScript", "CSS", "Accessibility"]
+    },
+    {
+      "group": "Tooling",
+      "items": ["Vite", "Storybook", "Playwright"]
+    }
+  ],
+  "experience": [
+    {
+      "company": "Example Co.",
+      "role": "Senior Frontend Engineer",
+      "dates": "2022 – Present",
+      "location": "Austin, TX",
+      "highlights": [
+        "Led the move to a shared design system used by five product teams.",
+        "Cut the main dashboard's load time by 40%."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Project name",
+      "dates": "2024",
+      "kind": "Frontend",
+      "summary": "One line on what it is.",
+      "highlights": ["What you did and what tech you used."],
+      "link": "https://github.com/your-username/project"
+    }
+  ]
 }
