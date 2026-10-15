@@ -54,6 +54,8 @@ The contact page uses [Netlify Forms](https://docs.netlify.com/forms/setup/), so
 
 `seo/plugin.ts` (a small Vite plugin) builds the page title, description, canonical URL, Open Graph and Twitter card tags, and JSON-LD from `profile.json`, and emits `favicon.svg`, a 1200×630 `og-image.png`, `robots.txt` and `sitemap.xml`. The preview image is rendered with [`@resvg/resvg-js`](https://github.com/yisibl/resvg-js) (a prebuilt native SVG renderer, no browser needed) using the bundled Inter font in `seo/fonts/` (SIL Open Font License).
 
+It also emits two copies of your profile for AI tools, such as the screeners recruiters use: `llms.txt` (a Markdown summary plus everything in `about-me.md` outside the TODO section, following [llmstxt.org](https://llmstxt.org)) and `resume.json` (a [JSON Resume](https://jsonresume.org) built from `profile.json`; dates like `Oct 2023 – Present` become `startDate: "2023-10"`). Only put things in `about-me.md` you're happy to publish, since `llms.txt` makes all of it readable in one place.
+
 ## Visitor questions
 
 Off by default. To turn it on, set `LOG_QUESTIONS=true` in Netlify's environment variables and redeploy. If you do, consider telling visitors (for example in your bio or footer) that questions are saved.

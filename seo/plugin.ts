@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import type { Plugin } from "vite";
+import { cleanKnowledge } from "../netlify/lib/chat.ts";
+import { jsonResume, llmsTxt, type ResumeProfile } from "./machine.ts";
 import {
   faviconSvg,
   headTags,
@@ -10,7 +12,6 @@ import {
   robotsTxt,
   siteUrl,
   sitemapXml,
-  type SeoProfile,
 } from "./meta.ts";
 
 const fonts = ["Inter_800ExtraBold.ttf", "Inter_600SemiBold.ttf"].map((f) =>
@@ -31,15 +32,22 @@ const renderPng = (svg: string) =>
     .asPng();
 
 // Adds title, description, Open Graph/Twitter tags, canonical URL and JSON-LD to
-// index.html, and emits favicon.svg, og-image.png, robots.txt and sitemap.xml.
+// index.html, and emits favicon.svg, og-image.png, robots.txt, sitemap.xml, plus
+// llms.txt and resume.json for AI tools.
 export default function seo(profileJson: string): Plugin {
-  const profile: SeoProfile = JSON.parse(readFileSync(profileJson, "utf8"));
+  const profile: ResumeProfile = JSON.parse(readFileSync(profileJson, "utf8"));
+  const knowledge = () =>
+    cleanKnowledge(
+      readFileSync(resolve(dirname(profileJson), "about-me.md"), "utf8"),
+    );
   const url = siteUrl(profile, process.env);
   const files = (): Record<string, string | Uint8Array> => ({
     "favicon.svg": faviconSvg(profile),
     [OG_IMAGE.path]: renderPng(ogImageSvg(profile, url)),
     "robots.txt": robotsTxt(url),
     "sitemap.xml": sitemapXml(url),
+    "llms.txt": llmsTxt(profile, knowledge(), url),
+    "resume.json": `${JSON.stringify(jsonResume(profile, url), null, 2)}\n`,
   });
 
   return {
@@ -57,6 +65,7 @@ export default function seo(profileJson: string): Plugin {
         png: "image/png",
         txt: "text/plain",
         xml: "application/xml",
+        json: "application/json",
       };
       server.middlewares.use((req, res, next) => {
         const name = req.url?.split("?")[0].slice(1) ?? "";
@@ -65,6 +74,8 @@ export default function seo(profileJson: string): Plugin {
           OG_IMAGE.path,
           "robots.txt",
           "sitemap.xml",
+          "llms.txt",
+          "resume.json",
         ];
         if (!generated.includes(name)) return next();
         res.setHeader("Content-Type", types[name.split(".").pop()!]);
