@@ -1,6 +1,13 @@
 # Discover Me
 
+[![CI](https://github.com/thanhgly/discover-me/actions/workflows/ci.yml/badge.svg)](https://github.com/thanhgly/discover-me/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 An AI-powered portfolio: visitors chat with an assistant that answers questions about your experience, skills, and projects. Fork it, drop in your own profile and Claude API key, and deploy your own copy.
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/thanhgly/discover-me)
+
+The button copies this repo to your GitHub account and deploys it. Leave the API key empty to try it in demo mode first, then follow the steps below to make it yours.
 
 **Architecture:** a serverless (Jamstack) app. A static React + TypeScript + Tailwind site is served from Netlify's CDN, and one Netlify Function streams answers from Claude. There's no always-on server or database, so it costs nothing when nobody's chatting.
 
