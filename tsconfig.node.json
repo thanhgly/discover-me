@@ -8,5 +8,5 @@
     "noEmit": true,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "seo"]
+  "include": ["vite.config.ts", "vitest.config.ts", "seo", "scripts"]
 }

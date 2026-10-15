@@ -20,6 +20,8 @@ The button copies this repo to your GitHub account and deploys it. Leave the API
    - **Keep your data out of git (recommended for public repos):** copy `profile/` to `profile.local/` and edit the copy. `profile.local/` is git-ignored, and the site and assistant use it automatically when it exists.
    - **Commit your data:** edit `profile/` directly.
 
+   **Shortcut:** `npm run import-profile -- resume.pdf` drafts both `profile.local/` files from your resume, a LinkedIn "Save to PDF" export, or `.md`/`.txt` notes (pass several at once). It uses facts only from those files and lists what's missing as questions in the `## TODO` section. It needs `ANTHROPIC_API_KEY` and costs a few cents; `IMPORT_MODEL` picks the model (default `claude-opus-5-5`). Review the drafts before you publish.
+
    Each folder has two files:
    - `profile.json`: name, pronoun, title, bio, links, contact email, CV link, plus optional `experience`, `projects` and `skills` (home page sections that hide when empty), `openToRoles` (what you're looking for; also enables the "open to new roles?" chat starter) and `siteUrl` (used for link previews when Netlify's `URL` isn't set). These appear on the site.
    - `about-me.md`: the assistant's knowledge base. Write in the third person; the assistant answers only from this file. A `## TODO` section is never sent to the model.
