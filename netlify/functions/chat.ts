@@ -1,12 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Config, Context } from "@netlify/functions";
 import {
-  MODEL,
+  chatRequest,
   ownerFirstName,
   ownerProfile,
   ValidationError,
   parseMessages,
-  systemPrompt,
 } from "../lib/chat";
 import { loggingEnabled, saveExchange } from "../lib/chatLog";
 import { demoReply, isDemoMode } from "../lib/demo";
@@ -40,17 +39,9 @@ export default async (req: Request, context: Context): Promise<Response> => {
   client ??= new Anthropic();
   const encoder = new TextEncoder();
   // Abort generation (and stop billing) when the visitor disconnects.
-  const stream = client.messages.stream(
-    {
-      model: MODEL,
-      max_tokens: 2048,
-      output_config: { effort: "low" },
-      cache_control: { type: "ephemeral" },
-      system: systemPrompt(),
-      messages,
-    },
-    { signal: req.signal },
-  );
+  const stream = client.messages.stream(chatRequest(messages), {
+    signal: req.signal,
+  });
   const body = new ReadableStream<Uint8Array>({
     async start(controller) {
       let reply = "";

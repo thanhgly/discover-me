@@ -31,7 +31,8 @@ npm run dev:netlify       # site + chat function at http://localhost:8888
    npm run test:ci
    ```
 
-4. Open a pull request using the template, describing what changes for someone who forks the project.
+4. If you change the system prompt or the chat request, also run `npm run eval` (needs an API key, costs a few cents) and mention the result in your pull request.
+5. Open a pull request using the template, describing what changes for someone who forks the project.
 
 ## Reporting bugs
 

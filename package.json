@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "dev:netlify": "netlify dev",
+    "eval": "node --env-file-if-exists=.env eval/guardrails.ts",
     "start": "netlify dev --offline --target-port 5180 --command \"vite --port 5180 --strictPort\""
   },
   "dependencies": {
