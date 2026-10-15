@@ -6,6 +6,10 @@
   # The chat function reads the profile at runtime (profile.local/ wins when present)
   included_files = ["profile/**", "profile.local/**"]
 
+# Prompts for these when someone deploys with the "Deploy to Netlify" button
+[template.environment]
+  ANTHROPIC_API_KEY = "Your Claude API key from console.anthropic.com (leave empty to try demo mode)"
+
 [dev]
   command = "npm run dev"
   targetPort = 5173

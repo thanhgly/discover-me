@@ -2,6 +2,10 @@ import { getStore } from "@netlify/blobs";
 
 export const STORE_NAME = "chat-log";
 
+// Off unless the site owner opts in with LOG_QUESTIONS=true.
+export const loggingEnabled = () =>
+  process.env.LOG_QUESTIONS?.trim().toLowerCase() === "true";
+
 export type ChatLogEntry = {
   timestamp: string;
   question: string;

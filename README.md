@@ -20,6 +20,8 @@ An AI-powered portfolio: visitors chat with an assistant that answers questions 
    - If your data is in `profile.local/`, deploy from your machine so it's included: `npx netlify-cli deploy --build --prod`. (Builds triggered from GitHub won't have it and would show the sample.)
    - If you committed `profile/`, just connect the repo and Netlify deploys on every push.
 
+**Demo mode:** until `ANTHROPIC_API_KEY` is set, the chat answers with preset replies built from `profile.json` (skills, experience, projects, contact) and says it's in demo mode. Handy for trying a fork before buying API credits.
+
 Optional: set `CLAUDE_MODEL` (for example `claude-sonnet-5-5`) to use a different Claude model. The default is `claude-haiku-5-5`, which costs well under a cent per message.
 
 Your API key stays in your own Netlify settings and is only used server-side; it never reaches the browser.
@@ -45,7 +47,9 @@ The contact page uses [Netlify Forms](https://docs.netlify.com/forms/setup/), so
 
 ## Visitor questions
 
-After each reply, the chat function saves the question, the reply and a timestamp to a [Netlify Blobs](https://docs.netlify.com/blobs/overview/) store named `chat-log`. Nothing that identifies the visitor (IP, user agent, conversation history) is stored. Entries where the assistant said it didn't know have `"unanswered": true`: those are gaps to fill in `about-me.md`. Saving failures are logged and never affect the chat.
+Off by default. To turn it on, set `LOG_QUESTIONS=true` in Netlify's environment variables and redeploy. If you do, consider telling visitors (for example in your bio or footer) that questions are saved.
+
+When it's on, after each reply the chat function saves the question, the reply and a timestamp to a [Netlify Blobs](https://docs.netlify.com/blobs/overview/) store named `chat-log`. Nothing that identifies the visitor (IP, user agent, conversation history) is stored. Entries where the assistant said it didn't know have `"unanswered": true`: those are gaps to fill in `about-me.md`. Saving failures are logged and never affect the chat.
 
 To read them, link your checkout to the site once (`netlify link`), then:
 
@@ -88,6 +92,8 @@ npm run dev:netlify       # site + chat function at http://localhost:8888
 | `npm test`              | Vitest in watch mode              |
 | `npm run test:ci`       | Single Vitest run                 |
 | `npm run test:coverage` | Single run with coverage          |
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). To report a security problem, see [SECURITY.md](SECURITY.md).
 
 CI (`.gitlab-ci.yml` on GitLab, `.github/workflows/ci.yml` on GitHub) runs format check, lint, build and tests. A husky pre-commit hook runs lint-staged.
 

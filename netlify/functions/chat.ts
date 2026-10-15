@@ -3,13 +3,21 @@ import type { Config, Context } from "@netlify/functions";
 import {
   MODEL,
   ownerFirstName,
+  ownerProfile,
   ValidationError,
   parseMessages,
   systemPrompt,
 } from "../lib/chat";
-import { saveExchange } from "../lib/chatLog";
+import { loggingEnabled, saveExchange } from "../lib/chatLog";
+import { demoReply, isDemoMode } from "../lib/demo";
 
-const client = new Anthropic();
+// Created on first use, so the function still loads (in demo mode) without a key.
+let client: Anthropic | undefined;
+
+const headers = {
+  "Content-Type": "text/plain; charset=utf-8",
+  "Cache-Control": "no-store",
+};
 
 const fallback = () =>
   `Sorry, I can't help with that one. Feel free to reach out to ${ownerFirstName()} directly through the contact page.`;
@@ -24,6 +32,12 @@ export default async (req: Request, context: Context): Promise<Response> => {
     return Response.json({ error: message }, { status: 400 });
   }
 
+  if (isDemoMode()) {
+    const question = messages[messages.length - 1].content as string;
+    return new Response(demoReply(question, ownerProfile()), { headers });
+  }
+
+  client ??= new Anthropic();
   const encoder = new TextEncoder();
   // Abort generation (and stop billing) when the visitor disconnects.
   const stream = client.messages.stream(
@@ -66,10 +80,15 @@ export default async (req: Request, context: Context): Promise<Response> => {
           // already closed by a cancelled client
         }
       }
-      // Log what visitors ask (no IP or other identifying data) to improve
-      // about-me.md. Runs after the reply is sent and never throws.
+      // If the owner opted in, log what visitors ask (no IP or other identifying
+      // data) to improve about-me.md. Runs after the reply is sent and never throws.
       const question = messages[messages.length - 1].content;
-      if (reply && !stream.aborted && typeof question === "string") {
+      if (
+        loggingEnabled() &&
+        reply &&
+        !stream.aborted &&
+        typeof question === "string"
+      ) {
         const saving = saveExchange(question, reply);
         context?.waitUntil?.(saving);
       }
@@ -79,12 +98,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
     },
   });
 
-  return new Response(body, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-store",
-    },
-  });
+  return new Response(body, { headers });
 };
 
 export const config: Config = {
