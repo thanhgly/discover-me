@@ -5,6 +5,8 @@
 
 An AI-powered portfolio: visitors chat with an assistant that answers questions about your experience, skills, and projects. Fork it, drop in your own profile and Claude API key, and deploy your own copy.
 
+**Live example:** [thanhly-portfolio.netlify.app](https://thanhly-portfolio.netlify.app) (the author's own portfolio). Try asking it about experience or skills.
+
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/thanhgly/discover-me)
 
 The button copies this repo to your GitHub account and deploys it. Leave the API key empty to try it in demo mode first, then follow the steps below to make it yours.
