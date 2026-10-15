@@ -76,3 +76,18 @@ it("builds the system prompt from the profile", () => {
   expect(prompt).toContain('use "she"');
   expect(prompt).toContain("<knowledge_base>\nFACTS\n</knowledge_base>");
 });
+
+it("adds openToRoles to the knowledge base only when set", () => {
+  const profile = { firstName: "Alex", lastName: "Rivera", pronoun: "she" };
+  expect(buildSystemPrompt(profile, "FACTS")).not.toContain(
+    "Open to new roles",
+  );
+  expect(
+    buildSystemPrompt(
+      { ...profile, openToRoles: "Senior roles, remote" },
+      "FACTS",
+    ),
+  ).toContain(
+    "FACTS\n\n## Open to new roles\n\nSenior roles, remote\n</knowledge_base>",
+  );
+});

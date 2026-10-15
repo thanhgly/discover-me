@@ -1,9 +1,9 @@
-import { MdAlternateEmail, MdPhone } from "react-icons/md";
+import { MdAlternateEmail } from "react-icons/md";
 import ContactForm from "./ContactForm";
 import { profile as personalInfo } from "../lib/profile";
 
 const Contact = () => {
-  const { emails, phone } = personalInfo;
+  const { emails } = personalInfo;
 
   return (
     <section className="grid gap-10 py-10 lg:grid-cols-[1fr_minmax(0,22rem)] lg:gap-16 lg:py-20">
@@ -26,15 +26,6 @@ const Contact = () => {
             label="Email"
             value={email}
             icon={<MdAlternateEmail size={20} />}
-          />
-        ))}
-        {phone.map((number) => (
-          <ContactCard
-            key={number}
-            href={`tel:${number}`}
-            label="Phone"
-            value={number}
-            icon={<MdPhone size={20} />}
           />
         ))}
       </aside>
