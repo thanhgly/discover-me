@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
+import type { DemoProfile } from "./demo";
 
 // Override with the CLAUDE_MODEL env var, e.g. "claude-sonnet-5-5" for richer answers.
 export const MODEL = process.env.CLAUDE_MODEL || "claude-haiku-5-5";
@@ -56,11 +57,9 @@ export function cleanKnowledge(markdown: string): string {
     .trim();
 }
 
-type Profile = {
-  firstName: string;
+type Profile = DemoProfile & {
   lastName: string;
   pronoun: string;
-  openToRoles?: string;
 };
 
 // Your real profile lives in the git-ignored profile.local/; profile/ holds the sample.
@@ -91,6 +90,7 @@ function load() {
 }
 
 export const systemPrompt = () => load().prompt;
+export const ownerProfile = () => load().profile;
 export const ownerFirstName = () => load().profile.firstName;
 
 export function buildSystemPrompt(

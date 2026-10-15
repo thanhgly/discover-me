@@ -1,5 +1,11 @@
 import { getStore } from "@netlify/blobs";
-import { logEntry, saidDontKnow, saveExchange, STORE_NAME } from "./chatLog";
+import {
+  logEntry,
+  loggingEnabled,
+  saidDontKnow,
+  saveExchange,
+  STORE_NAME,
+} from "./chatLog";
 
 vi.mock("@netlify/blobs", () => ({ getStore: vi.fn() }));
 
@@ -56,4 +62,12 @@ it("never throws when saving fails", async () => {
   await expect(saveExchange("Q", "A")).resolves.toBeUndefined();
   expect(error).toHaveBeenCalled();
   error.mockRestore();
+});
+
+it("logs only when the owner opts in", () => {
+  vi.stubEnv("LOG_QUESTIONS", "");
+  expect(loggingEnabled()).toBe(false);
+  vi.stubEnv("LOG_QUESTIONS", "TRUE");
+  expect(loggingEnabled()).toBe(true);
+  vi.unstubAllEnvs();
 });
