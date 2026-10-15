@@ -76,6 +76,8 @@ netlify blobs:list chat-log --json | jq -r '.blobs[].key' \
 
 Delete an entry with `netlify blobs:delete chat-log <key>`. You can also browse the store in the Netlify UI under **Blobs**.
 
+**Quicker:** `npm run questions` prints the last 30 days in one go: totals, unanswered questions (newest first) and questions asked more than once. Add `-- --days 7` for another window, or `-- --summarize` to have Claude group the questions by theme and list the facts to add to `about-me.md` (a few cents; `SUMMARY_MODEL` picks the model, default `claude-sonnet-5-5`). It needs `NETLIFY_SITE_ID` and `NETLIFY_AUTH_TOKEN` in `.env` or your shell.
+
 ## Local development
 
 Requires Node 20.19+ (22 recommended, see `.nvmrc`).
