@@ -90,6 +90,8 @@ npm run dev:netlify       # site + chat function at http://localhost:8888
 
 `src/components/ChatBox.tsx` posts the conversation to `/api/chat`. `netlify/functions/chat.ts` validates it, builds a system prompt from the profile (`profile.local/` if present, else `profile/`) (`netlify/lib/chat.ts`), calls Claude through `@anthropic-ai/sdk`, and streams the reply back as plain text. Conversations are capped at 20 messages of 1,000 characters each, and Netlify rate-limits each visitor to 10 requests a minute. The conversation lives in `ChatProvider` above the routes (and in `sessionStorage`), so it survives visiting the contact page or reloading the tab.
 
+**Guardrail eval:** `npm run eval` sends prompt-injection and off-topic questions (override instructions, prompt leaks, fake system messages, coding requests, made-up facts) to your real chat prompt and grades each reply, then exits non-zero if any fail. It calls the Claude API (a few cents a run, Node 22.18+), so it isn't part of CI. Run it after editing `about-me.md` or the system prompt. Cases live in `eval/guardrails.ts`; `EVAL_GRADER_MODEL` picks the grading model (default `claude-sonnet-5-5`).
+
 ## Scripts
 
 | Script                  | Purpose                           |
@@ -103,6 +105,7 @@ npm run dev:netlify       # site + chat function at http://localhost:8888
 | `npm test`              | Vitest in watch mode              |
 | `npm run test:ci`       | Single Vitest run                 |
 | `npm run test:coverage` | Single run with coverage          |
+| `npm run eval`          | Guardrail eval (calls Claude API) |
 
 Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). To report a security problem, see [SECURITY.md](SECURITY.md).
 

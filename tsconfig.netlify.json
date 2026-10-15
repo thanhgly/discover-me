@@ -11,5 +11,5 @@
     "allowImportingTsExtensions": true,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["netlify"]
+  "include": ["netlify", "eval"]
 }

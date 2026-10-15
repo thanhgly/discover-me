@@ -93,6 +93,16 @@ export const systemPrompt = () => load().prompt;
 export const ownerProfile = () => load().profile;
 export const ownerFirstName = () => load().profile.firstName;
 
+// Shared by the chat function and the guardrail eval (npm run eval), so both test the same request.
+export const chatRequest = (messages: Anthropic.MessageParam[]) => ({
+  model: MODEL,
+  max_tokens: 2048,
+  output_config: { effort: "low" as const },
+  cache_control: { type: "ephemeral" as const },
+  system: systemPrompt(),
+  messages,
+});
+
 export function buildSystemPrompt(
   { firstName: name, lastName, pronoun, openToRoles }: Profile,
   knowledge: string,
