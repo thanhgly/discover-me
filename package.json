@@ -8,6 +8,7 @@
     "build": "npm run typecheck && vite build",
     "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",
+    "import-profile": "node --env-file-if-exists=.env scripts/import-profile.ts",
     "test": "vitest",
     "test:ci": "vitest run",
     "test:coverage": "vitest run --coverage",
