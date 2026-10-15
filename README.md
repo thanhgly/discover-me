@@ -37,7 +37,7 @@ Your API key stays in your own Netlify settings and is only used server-side; it
 
 ### Auto-deploy from GitLab
 
-Pushes to `main` deploy to Netlify after the checks pass (`.gitlab-ci.yml`). In the GitLab project, go to **Settings → CI/CD → Variables** and add these, all **Protected** (`main` is protected):
+Each push to `main` gets a manual **deploy** job (`.gitlab-ci.yml`): after the checks pass, press play on it in **Build → Pipelines** to publish. It's manual so routine merges don't each use Netlify build credits. In the GitLab project, go to **Settings → CI/CD → Variables** and add these, all **Protected** (`main` is protected):
 
 - `NETLIFY_AUTH_TOKEN`: a Netlify personal access token (**User settings → Applications**). Also mark it **Masked**.
 - `NETLIFY_SITE_ID`: from Netlify **Site configuration → Site details**.
